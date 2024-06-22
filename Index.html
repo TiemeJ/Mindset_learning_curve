@@ -24,13 +24,15 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             margin-bottom: 20px;
         }
-        #translation-table {
+        #translation-table, #chart-container {
             margin: 20px auto;
-            border-collapse: separate;
-            border-spacing: 0;
             border-radius: 5px;
             overflow: hidden;
             box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        #translation-table {
+            border-collapse: separate;
+            border-spacing: 0;
         }
         #translation-table td, #translation-table th {
             border: 1px solid #ddd;
@@ -52,26 +54,27 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        #submit-btn {
+        #submit-btn, #show-curve-btn {
             padding: 10px 20px;
             margin-left: 10px;
-            background-color: #2ecc71;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
+        #submit-btn {
+            background-color: #2ecc71;
+        }
         #submit-btn:hover {
             background-color: #27ae60;
         }
-        #chart-container {
-            width: 80%;
-            margin: 0 auto;
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        #show-curve-btn {
+            background-color: #3498db;
+            display: none;
+        }
+        #show-curve-btn:hover {
+            background-color: #2980b9;
         }
         #sequence {
             font-size: 24px;
@@ -82,68 +85,78 @@
             font-weight: bold;
             margin-top: 10px;
         }
+        #chart-container {
+            display: none;
+            width: 80%;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
     <h1>Mind Your Learning Curve</h1>
     <div id="game-container">
         <p>Decode the numbers into letters to form a 5-letter word using the translation table below!</p>
-        <table id="translation-table">
-            <tr>
-                <th>Num</th>
-                <th>Let</th>
-                <th>Num</th>
-                <th>Let</th>
-                <th>Num</th>
-                <th>Let</th>
-                <th>Num</th>
-                <th>Let</th>
-                <th>Num</th>
-                <th>Let</th>
-            </tr>
-            <tr>
-                <td>1</td><td>A</td>
-                <td>2</td><td>B</td>
-                <td>3</td><td>C</td>
-                <td>4</td><td>D</td>
-                <td>5</td><td>E</td>
-            </tr>
-            <tr>
-                <td>6</td><td>F</td>
-                <td>7</td><td>G</td>
-                <td>8</td><td>H</td>
-                <td>9</td><td>I</td>
-                <td>10</td><td>J</td>
-            </tr>
-            <tr>
-                <td>11</td><td>K</td>
-                <td>12</td><td>L</td>
-                <td>13</td><td>M</td>
-                <td>14</td><td>N</td>
-                <td>15</td><td>O</td>
-            </tr>
-            <tr>
-                <td>16</td><td>P</td>
-                <td>17</td><td>Q</td>
-                <td>18</td><td>R</td>
-                <td>19</td><td>S</td>
-                <td>20</td><td>T</td>
-            </tr>
-            <tr>
-                <td>21</td><td>U</td>
-                <td>22</td><td>V</td>
-                <td>23</td><td>W</td>
-                <td>24</td><td>X</td>
-                <td>25</td><td>Y</td>
-            </tr>
-            <tr>
-                <td>26</td><td>Z</td>
-                <td></td><td></td>
-                <td></td><td></td>
-                <td></td><td></td>
-                <td></td><td></td>
-            </tr>
-        </table>
+        <div id="table-chart-container">
+            <table id="translation-table">
+                <tr>
+                    <th>Num</th>
+                    <th>Let</th>
+                    <th>Num</th>
+                    <th>Let</th>
+                    <th>Num</th>
+                    <th>Let</th>
+                    <th>Num</th>
+                    <th>Let</th>
+                    <th>Num</th>
+                    <th>Let</th>
+                </tr>
+                <tr>
+                    <td>1</td><td>A</td>
+                    <td>2</td><td>B</td>
+                    <td>3</td><td>C</td>
+                    <td>4</td><td>D</td>
+                    <td>5</td><td>E</td>
+                </tr>
+                <tr>
+                    <td>6</td><td>F</td>
+                    <td>7</td><td>G</td>
+                    <td>8</td><td>H</td>
+                    <td>9</td><td>I</td>
+                    <td>10</td><td>J</td>
+                </tr>
+                <tr>
+                    <td>11</td><td>K</td>
+                    <td>12</td><td>L</td>
+                    <td>13</td><td>M</td>
+                    <td>14</td><td>N</td>
+                    <td>15</td><td>O</td>
+                </tr>
+                <tr>
+                    <td>16</td><td>P</td>
+                    <td>17</td><td>Q</td>
+                    <td>18</td><td>R</td>
+                    <td>19</td><td>S</td>
+                    <td>20</td><td>T</td>
+                </tr>
+                <tr>
+                    <td>21</td><td>U</td>
+                    <td>22</td><td>V</td>
+                    <td>23</td><td>W</td>
+                    <td>24</td><td>X</td>
+                    <td>25</td><td>Y</td>
+                </tr>
+                <tr>
+                    <td>26</td><td>Z</td>
+                    <td></td><td></td>
+                    <td></td><td></td>
+                    <td></td><td></td>
+                    <td></td><td></td>
+                </tr>
+            </table>
+            <div id="chart-container">
+                <canvas id="learning-curve"></canvas>
+            </div>
+        </div>
         <p>Round: <span id="round">1</span>/5</p>
         <p>Sequence to decode: <span id="sequence"></span></p>
         <div id="input-area">
@@ -151,9 +164,7 @@
             <button id="submit-btn">Submit</button>
         </div>
         <p id="message"></p>
-    </div>
-    <div id="chart-container">
-        <canvas id="learning-curve"></canvas>
+        <button id="show-curve-btn">Show my learning curve</button>
     </div>
     <script>
         const translationTable = {
@@ -200,7 +211,8 @@
                     round++;
                     setTimeout(startRound, 2000);
                 } else {
-                    showLearningCurve();
+                    document.getElementById('show-curve-btn').style.display = 'inline-block';
+                    submitBtn.disabled = true;
                 }
             } else {
                 messageDisplay.textContent = "Incorrect. Try again!";
@@ -210,7 +222,8 @@
         }
 
         function showLearningCurve() {
-            submitBtn.disabled = true;
+            document.getElementById('translation-table').style.display = 'none';
+            document.getElementById('chart-container').style.display = 'block';
             const ctx = document.getElementById('learning-curve').getContext('2d');
             new Chart(ctx, {
                 type: 'line',
@@ -227,7 +240,8 @@
                     responsive: true,
                     scales: {
                         y: {
-                            beginAtZero: true,
+                            reverse: true,
+                            beginAtZero: false,
                             title: {
                                 display: true,
                                 text: 'Time (seconds)'
@@ -256,6 +270,7 @@
                 checkAnswer();
             }
         });
+        document.getElementById('show-curve-btn').addEventListener('click', showLearningCurve);
 
         startRound();
     </script>
