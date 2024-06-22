@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Your Learning Curve</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f0f8ff;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        #game-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        #translation-table {
+            margin: 20px auto;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        #translation-table td, #translation-table th {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        #translation-table th {
+            background-color: #3498db;
+            color: white;
+        }
+        #translation-table td:nth-child(odd) {
+            font-weight: bold;
+        }
+        #input-area {
+            margin-top: 20px;
+        }
+        #word-input {
+            width: 200px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        #submit-btn {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #submit-btn:hover {
+            background-color: #27ae60;
+        }
+        #chart-container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        #sequence {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        #message {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mind Your Learning Curve</h1>
+    <div id="game-container">
+        <p>Decode the numbers into letters to form a 5-letter word using the translation table below!</p>
+        <table id="translation-table">
+            <tr>
+                <th>Num</th>
+                <th>Let</th>
+                <th>Num</th>
+                <th>Let</th>
+                <th>Num</th>
+                <th>Let</th>
+                <th>Num</th>
+                <th>Let</th>
+                <th>Num</th>
+                <th>Let</th>
+            </tr>
+            <tr>
+                <td>1</td><td>A</td>
+                <td>2</td><td>B</td>
+                <td>3</td><td>C</td>
+                <td>4</td><td>D</td>
+                <td>5</td><td>E</td>
+            </tr>
+            <tr>
+                <td>6</td><td>F</td>
+                <td>7</td><td>G</td>
+                <td>8</td><td>H</td>
+                <td>9</td><td>I</td>
+                <td>10</td><td>J</td>
+            </tr>
+            <tr>
+                <td>11</td><td>K</td>
+                <td>12</td><td>L</td>
+                <td>13</td><td>M</td>
+                <td>14</td><td>N</td>
+                <td>15</td><td>O</td>
+            </tr>
+            <tr>
+                <td>16</td><td>P</td>
+                <td>17</td><td>Q</td>
+                <td>18</td><td>R</td>
+                <td>19</td><td>S</td>
+                <td>20</td><td>T</td>
+            </tr>
+            <tr>
+                <td>21</td><td>U</td>
+                <td>22</td><td>V</td>
+                <td>23</td><td>W</td>
+                <td>24</td><td>X</td>
+                <td>25</td><td>Y</td>
+            </tr>
+            <tr>
+                <td>26</td><td>Z</td>
+                <td></td><td></td>
+                <td></td><td></td>
+                <td></td><td></td>
+                <td></td><td></td>
+            </tr>
+        </table>
+        <p>Round: <span id="round">1</span>/5</p>
+        <p>Sequence to decode: <span id="sequence"></span></p>
+        <div id="input-area">
+            <input type="text" id="word-input" placeholder="Enter the decoded word">
+            <button id="submit-btn">Submit</button>
+        </div>
+        <p id="message"></p>
+    </div>
+    <div id="chart-container">
+        <canvas id="learning-curve"></canvas>
+    </div>
+    <script>
+        const translationTable = {
+            '1': 'A', '2': 'B', '3': 'C', '4': 'D', '5': 'E', '6': 'F', '7': 'G', '8': 'H', '9': 'I', '10': 'J',
+            '11': 'K', '12': 'L', '13': 'M', '14': 'N', '15': 'O', '16': 'P', '17': 'Q', '18': 'R', '19': 'S',
+            '20': 'T', '21': 'U', '22': 'V', '23': 'W', '24': 'X', '25': 'Y', '26': 'Z'
+        };
+        const words = ['APPLE', 'BEACH', 'CHAIR', 'DANCE', 'EAGLE', 'FLUTE', 'GRAPE', 'HOUSE', 'IGLOO', 'JOKER'];
+        const roundDisplay = document.getElementById('round');
+        const sequenceDisplay = document.getElementById('sequence');
+        const wordInput = document.getElementById('word-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const messageDisplay = document.getElementById('message');
+
+        let round = 1;
+        let currentWord = '';
+        let currentSequence = [];
+        let times = [];
+        let startTime;
+
+        function startRound() {
+            currentWord = words[Math.floor(Math.random() * words.length)];
+            currentSequence = encodeWord(currentWord);
+            sequenceDisplay.textContent = currentSequence.join(' ');
+            wordInput.value = '';
+            messageDisplay.textContent = '';
+            startTime = Date.now();
+        }
+
+        function encodeWord(word) {
+            return word.split('').map(letter => {
+                return Object.keys(translationTable).find(key => translationTable[key] === letter);
+            });
+        }
+
+        function checkAnswer() {
+            const playerAnswer = wordInput.value.trim().toUpperCase();
+            const timeTaken = (Date.now() - startTime) / 1000; // Time taken in seconds
+
+            if (playerAnswer === currentWord) {
+                times.push(timeTaken);
+                messageDisplay.textContent = `Correct! Time taken: ${timeTaken.toFixed(2)} seconds`;
+                if (round < 5) {
+                    round++;
+                    setTimeout(startRound, 2000);
+                } else {
+                    showLearningCurve();
+                }
+            } else {
+                messageDisplay.textContent = "Incorrect. Try again!";
+                return; // Don't proceed to next round on incorrect answer
+            }
+            roundDisplay.textContent = round;
+        }
+
+        function showLearningCurve() {
+            submitBtn.disabled = true;
+            const ctx = document.getElementById('learning-curve').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5'],
+                    datasets: [{
+                        label: 'Time taken (seconds)',
+                        data: times,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Time (seconds)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Rounds'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Your Learning Curve'
+                        }
+                    }
+                }
+            });
+        }
+
+        submitBtn.addEventListener('click', checkAnswer);
+        wordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        startRound();
+    </script>
+</body>
+</html>
